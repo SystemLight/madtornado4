@@ -1,0 +1,5 @@
+docs/*
+
+madtornado/log/*
+madtornado4/wwwroot/*
+madtornado4/mvc/view/*

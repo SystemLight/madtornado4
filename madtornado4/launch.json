@@ -1,0 +1,42 @@
+{
+  "env": "development",
+  "development": {
+    "address": "127.0.0.1",
+    "port": 8095
+  },
+  "production": {
+    "log_dir": "log/",
+    "address": "0.0.0.0",
+    "port": 8095
+  },
+  "virtual_host": [
+    ".*"
+  ],
+  "static_file": {
+    ".*": [
+      {
+        "name": "s",
+        "url_prefix": "/s",
+        "map_path": "wwwroot/",
+        "default_filename": "index.html",
+        "use_spa": false
+      },
+      {
+        "name": null,
+        "url_prefix": "/",
+        "map_path": "wwwroot/",
+        "default_filename": "index.html",
+        "use_spa": false
+      }
+    ]
+  },
+  "galaxy": {
+    "db-1": {
+      "user": "",
+      "password": "",
+      "db": "",
+      "host": "",
+      "port": 3306
+    }
+  }
+}
