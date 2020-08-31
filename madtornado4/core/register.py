@@ -1,6 +1,41 @@
 from collections import defaultdict
 
 
+def param(method):
+    """
+
+    param装饰器允许你自由定义http方法接收的参数，
+
+    示例内容::
+
+        @param
+        async def get(self, name):
+            # name参数可自由定义是否接收
+            self.write({})
+
+        @param
+        async def get(self):
+            # 两种方式都不会产生异常，使用更灵活
+            self.write({})
+
+    :param method: 异步http方法函数
+    :return: 装饰包裹后的函数
+
+    """
+
+    async def wrap(self, *args):
+        size = len(args)
+        new_args = []
+        for i in range(method.__code__.co_argcount - 1):
+            if i > size:
+                new_args.append(None)
+            else:
+                new_args.append(args[i])
+        await method(self, *new_args)
+
+    return wrap
+
+
 class ArgType:
     """
 

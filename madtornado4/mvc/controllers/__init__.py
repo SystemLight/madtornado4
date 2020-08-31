@@ -56,33 +56,33 @@ class ApiController(RequestHandler, metaclass=RegisterMeta):
         """
         return self.ui.static_url(path, name, **kwargs)
 
-    def spit_out(self, name: str) -> Any:
+    def catapult(self, service_name: str) -> Any:
         """
 
         该方法可以将注入的服务类进行实例化弹出，通过该方法获取的内容将会被
         挂载到实例的属性上供二次调用，如果重复调用该方法scoped也不会重复实例，
         singleton注册的service全局共享一个实例对象
 
-        :param name: 服务名称，与注册时类名同名
+        :param service_name: 服务名称，与注册时类名同名
         :return: service对象实例
 
         """
-        service = getattr(self, name, None)
+        service = getattr(self, service_name, None)
         if service:
             return service
 
         singleton = self.settings["services"]["singleton"]
-        service = singleton.get(name, None)
+        service = singleton.get(service_name, None)
         if service:
-            setattr(self, name, service)
+            setattr(self, service_name, service)
             return service
 
         scoped = self.settings["services"]["scoped"]
-        service = scoped.get(name, None)
+        service = scoped.get(service_name, None)
         if service:
-            service = service(self.settings["launch"])
-            setattr(self, name, service)
-            return service
+            service_instance = service(self.settings["launch"])
+            setattr(self, service_name, service_instance)
+            return service_instance
 
         return None
 

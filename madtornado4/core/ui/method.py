@@ -1,6 +1,10 @@
 from typing import Optional, List
 
 
+class NotFoundStatic(Exception):
+    pass
+
+
 def static_url(self, path: str, name: Optional[str] = None, **kwargs) -> str:
     """
 
@@ -12,9 +16,10 @@ def static_url(self, path: str, name: Optional[str] = None, **kwargs) -> str:
     :return: 合成的文件路径
 
     """
-    static_file = self.settings.get("launch").get("static_file")  # type: List
-    for f in static_file:
-        if f["name"] == name:
-            prefix = f["static_url_prefix"].rstrip("/")
-            return "{}/{}".format(prefix, path).lstrip("/")
-    return ""
+    v_host = self.settings["launch"]["virtual_host"]  # type: List
+    static_file = self.settings["launch"]["static_file"]  # type: List
+    for v in v_host:
+        for f in static_file[v]:
+            if f["name"] == name:
+                return "{}/{}".format(f["url_prefix"].rstrip("/"), path)
+    raise NotFoundStatic("Name is not exists")

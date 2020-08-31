@@ -1,6 +1,6 @@
 from tornado.web import removeslash
 
-from core.register import uri, ArgType
+from core.register import uri, param
 from core.form import verify
 from mvc.controllers import ApiController
 from mvc.models import example
@@ -23,14 +23,12 @@ class Example(ApiController):
     """
 
     __urls = [
-        uri("/example/{}", ArgType.Letter),
+        uri("/example/{Letter}"),
         "/example", "/index"
     ]
 
-    async def get(self, *args):
-        # service = await self.spit_out("MysqlService")(self.spit_out("MysqlPoolService"))
-        # self.write(await service.queryone("select * from goods"))
-
+    @param
+    async def get(self):
         self.write({})
 
     @removeslash
