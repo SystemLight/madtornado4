@@ -63,8 +63,8 @@ class Startup(IStartup):
             routes.append((
                 r"{}/(.*)$".format(static_url_prefix), StaticController,
                 {
-                    "name": s["name"], "use_spa": s["use_spa"],
-                    "path": s["map_path"], "default_filename": s["default_filename"]
+                    "path": s["map_path"], "default_filename": s["default_filename"],
+                    "use_spa": s["use_spa"]
                 }
             ))
         return routes

@@ -1,5 +1,4 @@
 from core.interface import IStartup
-from core.db import mysql
 
 """
 galaxy用于存放使用者的编码内容，为了不污染项目结构而特意开辟出的空间，

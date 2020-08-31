@@ -15,14 +15,12 @@
   "static_file": {
     ".*": [
       {
-        "name": "s",
         "url_prefix": "/s",
         "map_path": "wwwroot/",
         "default_filename": "index.html",
         "use_spa": false
       },
       {
-        "name": null,
         "url_prefix": "/",
         "map_path": "wwwroot/",
         "default_filename": "index.html",

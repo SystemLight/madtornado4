@@ -117,10 +117,9 @@ class StaticController(StaticFileHandler):
 
     """
 
-    def initialize(self, name: str, use_spa: str, path: str, default_filename: str = None) -> None:
+    def initialize(self, use_spa: str, path: str, default_filename: str = None) -> None:
         super(StaticController, self).initialize(path, default_filename)
         self.use_spa = use_spa
-        self.name = name
 
     def data_received(self, chunk: bytes) -> Optional[Awaitable[None]]:
         raise NotImplementedError()
