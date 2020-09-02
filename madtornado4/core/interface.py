@@ -11,6 +11,9 @@ class IDispose(ABC):
 
     """
 
+    def __init__(self, launch):
+        self.launch = launch
+
     @abstractmethod
     def destroy(self) -> NoReturn:
         """

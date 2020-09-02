@@ -14,7 +14,7 @@ class MysqlPoolService(IDispose):
     """
 
     def __init__(self, launch):
-        self.launch = launch
+        super().__init__(launch)
         self.conf_key = "db"
         self.pool = None  # type: Optional[aiomysql.pool.Pool]
 
@@ -40,7 +40,7 @@ class MysqlConnService(IDispose):
     """
 
     def __init__(self, launch):
-        self.launch = launch
+        super().__init__(launch)
         self.conf_key = "db"
         self.conn = None  # type: Optional[aiomysql.Connection]
         self.cur = None  # type: Optional[aiomysql.Cursor]

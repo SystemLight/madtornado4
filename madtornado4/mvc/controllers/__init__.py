@@ -56,7 +56,30 @@ class ApiController(RequestHandler, metaclass=RegisterMeta):
         """
         return self.ui.static_url(path, name, **kwargs)
 
-    def catapult(self, service_name: str) -> Any:
+    def on_finish(self) -> None:
+        IOLoop.instance().add_future(
+            convert_yielded(self.async_on_finish()),
+            lambda v: gen_log.info("Scope services are automatically cleaned up")
+        )
+
+    async def async_on_finish(self) -> NoReturn:
+        """
+
+        自动回收scoped注册服务对象调用destroy()方法，
+        可支持异步销毁和同步销毁方式
+
+        :return:
+
+        """
+        scoped = self.application.scoped
+        for key in scoped:
+            s = getattr(self, key, None)
+            if s:
+                d = s.destroy()
+                if isawaitable(d):
+                    await d
+
+    def obtain(self, service_name: str) -> Any:
         """
 
         该方法可以将注入的服务类进行实例化弹出，通过该方法获取的内容将会被
@@ -71,13 +94,13 @@ class ApiController(RequestHandler, metaclass=RegisterMeta):
         if service:
             return service
 
-        singleton = self.settings["services"]["singleton"]
+        singleton = self.application.singleton
         service = singleton.get(service_name, None)
         if service:
             setattr(self, service_name, service)
             return service
 
-        scoped = self.settings["services"]["scoped"]
+        scoped = self.application.scoped
         service = scoped.get(service_name, None)
         if service:
             service_instance = service(self.settings["launch"])
@@ -86,28 +109,16 @@ class ApiController(RequestHandler, metaclass=RegisterMeta):
 
         return None
 
-    async def async_on_finish(self) -> NoReturn:
+    async def close_web(self) -> NoReturn:
         """
 
-        自动回收scoped注册服务对象调用destroy()方法，
-        可支持异步销毁和同步销毁方式
+        关闭网站，注意关闭网站服务即意味着程序退出
 
-        :return:
+        :return: NoReturn
 
         """
-        scoped = self.settings["services"]["scoped"]
-        for key in scoped:
-            s = getattr(self, key, None)
-            if s:
-                d = s.destroy()
-                if isawaitable(d):
-                    await d
-
-    def on_finish(self) -> None:
-        IOLoop.instance().add_future(
-            convert_yielded(self.async_on_finish()),
-            lambda v: gen_log.info("Scope services are automatically cleaned up")
-        )
+        await self.application.destroy()
+        IOLoop.instance().stop()
 
 
 class StaticController(StaticFileHandler):

@@ -15,13 +15,13 @@ from mvc.controllers import StaticController
 
 import os
 
-from typing import List, Dict, Tuple, Type, Awaitable, Union
+from typing import List, Dict, Tuple, Type, Awaitable, Union, Any
 
 """
 madtornado启动器，一般来说你不应该修改这里的内容
 """
 
-# 加载launch配置参数
+# 尝试加载launch配置参数
 try:
     launch = require("launch.json")
 except FileNotFoundError:
@@ -31,6 +31,27 @@ conf = launch[launch["env"]]
 # 定义options可用变量
 define("port", conf["port"], int, "定义服务监听端口", group="HTTPServer")
 define("address", conf["address"], str, "定义接收请求匹配地址", group="HTTPServer")
+
+
+class MVCApplication(Application):
+
+    def __init__(self, handlers=None, default_host=None, transforms=None, **settings: Any):
+        super().__init__(handlers, default_host, transforms, **settings)
+        self.singleton = {}
+        self.scoped = {}
+
+    async def destroy(self):
+        """
+
+        销毁注册的单例服务
+
+        :return:
+
+        """
+        for key in self.singleton:
+            d = self.singleton[key].destroy()
+            if isawaitable(d):
+                await d
 
 
 class Startup(IStartup):
@@ -122,14 +143,13 @@ class Startup(IStartup):
             "ui_modules": module.export,
 
             "launch": launch,
-            "services": {
-                "singleton": self.singleton_services,
-                "scoped": self.scoped_services
-            },
 
             **self.debug_setting
         }
-        return Application(handlers=self.route, **settings)
+        app = MVCApplication(handlers=self.route, **settings)
+        app.singleton = self.singleton_services
+        app.scoped = self.scoped_services
+        return app
 
 
 def build_host(stp: IStartup) -> HTTPServer:

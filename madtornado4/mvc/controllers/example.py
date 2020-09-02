@@ -1,4 +1,5 @@
 from tornado.web import removeslash
+from tornado.gen import sleep
 
 from core.register import uri, param
 from core.form import verify
@@ -29,6 +30,11 @@ class Example(ApiController):
 
     @param
     async def get(self):
+        await sleep(3)
+        self.set_header('Access-Control-Allow-Origin', '*')
+        self.set_header('Access-Control-Allow-Headers', '*')
+        self.set_header('Access-Control-Allow-Methods', 'PUT,POST,GET,DELETE,OPTIONS')
+        self.set_header('Access-Control-Max-Age', 600)
         self.write({})
 
     @removeslash
