@@ -1,6 +1,7 @@
+import os
 import json
-
-from typing import Dict, Any, NoReturn
+import platform
+from typing import Dict, Any, NoReturn, Union
 
 
 def require(path: str, encoding: str = "utf-8") -> Dict[str, Any]:
@@ -51,3 +52,20 @@ def write(path: str, data: str, encoding: str = "utf-8") -> NoReturn:
     """
     with open(path, "w", encoding=encoding) as fp:
         fp.write(data)
+
+
+def kill_form_port(port: Union[int, str]) -> NoReturn:
+    """
+
+    传入端口号，杀死进程
+
+    :param port: 端口号，int类型
+    :return: NoReturn
+
+    """
+    port = str(port)
+    if platform.system() == 'Windows':
+        command = """for /f "tokens=5" %i in ('netstat -ano ^| find \"""" + port + """\" ') do (taskkill /f /pid %i)"""
+    else:
+        command = """kill -9 $(netstat -nlp | grep :""" + port + """ | awk '{print $7}' | awk -F "/" '{print $1}')"""
+    os.system(command)

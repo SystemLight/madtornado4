@@ -1,15 +1,7 @@
-from tornado.web import removeslash, stream_request_body
-from tornado.gen import sleep
-
-from core.register import uri, param
-from core.form import verify
+from core.register import uri, cross_domain, api_method
 from mvc.controllers import ApiController
-from mvc.models import example
-
-import json
 
 
-@stream_request_body
 class Example(ApiController):
     """
 
@@ -29,13 +21,10 @@ class Example(ApiController):
         "/example", "/index"
     ]
 
-    @param
+    @cross_domain()
+    @api_method
     async def get(self):
-        self.set_header('Access-Control-Allow-Origin', '*')
-        self.set_header('Access-Control-Allow-Headers', '*')
-        self.set_header('Access-Control-Allow-Methods', 'PUT,POST,GET,DELETE,OPTIONS')
-        self.set_header('Access-Control-Max-Age', 600)
-        self.write({})
+        pass
 
     async def post(self):
         await self.get()

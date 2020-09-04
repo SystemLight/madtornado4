@@ -1,22 +1,18 @@
 from collections import defaultdict
 
 
-def param(method):
+def api_method(method):
     """
 
-    param装饰器允许你自由定义http方法接收的参数，
+    api装饰的方法将函数定义为API类型请求方法，可以获取到任意param参数值
+    同时方法返回的对象值会自动写入到返回请求当中
 
-    示例内容::
+    举例说明::
 
-        @param
-        async def get(self, name):
-            # name参数可自由定义是否接收
-            self.write({})
-
-        @param
+        @cross_domain()
+        @api_method
         async def get(self):
-            # 两种方式都不会产生异常，使用更灵活
-            self.write({})
+            return {}
 
     :param method: 异步http方法函数
     :return: 装饰包裹后的函数
@@ -24,16 +20,45 @@ def param(method):
     """
 
     async def wrap(self, *args):
-        size = len(args)
+        size = len(args) - 1
         new_args = []
         for i in range(method.__code__.co_argcount - 1):
             if i > size:
                 new_args.append(None)
             else:
                 new_args.append(args[i])
-        await method(self, *new_args)
+        result = await method(self, *new_args)
+        result = {} if result is None else result
+        self.write(result)
+        return result
 
     return wrap
+
+
+def cross_domain(origin: str = "*", headers: str = "*", methods: str = "GET,POST,PUT,DELETE,OPTIONS", max_age=600):
+    """
+
+    access为当前请求方法添加跨域属性
+
+    :param origin: 允许的作用域
+    :param headers: 允许的请求头
+    :param methods: 允许的请求方法
+    :param max_age: 最大非重复预请求时间
+    :return: 装饰包裹后的函数
+
+    """
+
+    def box(method):
+        async def wrap(self, *args):
+            self.set_header("Access-Control-Allow-Origin", origin)
+            self.set_header("Access-Control-Allow-Headers", headers)
+            self.set_header("Access-Control-Allow-Methods", methods)
+            self.set_header("Access-Control-Max-Age", max_age)
+            return await method(self, *args)
+
+        return wrap
+
+    return box
 
 
 class ArgType:
