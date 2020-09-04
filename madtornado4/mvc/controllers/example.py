@@ -1,4 +1,4 @@
-from tornado.web import removeslash
+from tornado.web import removeslash, stream_request_body
 from tornado.gen import sleep
 
 from core.register import uri, param
@@ -9,6 +9,7 @@ from mvc.models import example
 import json
 
 
+@stream_request_body
 class Example(ApiController):
     """
 
@@ -30,51 +31,11 @@ class Example(ApiController):
 
     @param
     async def get(self):
-        await sleep(3)
         self.set_header('Access-Control-Allow-Origin', '*')
         self.set_header('Access-Control-Allow-Headers', '*')
         self.set_header('Access-Control-Allow-Methods', 'PUT,POST,GET,DELETE,OPTIONS')
         self.set_header('Access-Control-Max-Age', 600)
         self.write({})
 
-    @removeslash
-    async def async_post(self, *args):
-        """
-
-        示例数据::
-
-            {
-                "name": "qlys",
-                "age": 3500,
-                "props": [
-                    {
-                        "name": "f22222222232d",
-                        "power": 100
-                    },
-                    {
-                        "name": "2323",
-                        "power": 100
-                    },
-                    {
-                        "name": "fd",
-                        "power": 100
-                    }
-                ],
-                "halo": {
-                    "light": 1,
-                    "p": {
-                        "name": "fd",
-                        "power": 100
-                    }
-                }
-            }
-
-        :param args:
-        :return:
-
-        """
-        # 让mad帮你验证实体模型并返回它
-        elves_obj = verify(example.Elves, json.loads(self.request.body.decode("utf-8")).get)
-
-        # 将验证通过的实体模型返回到前台页面当中
-        self.write(elves_obj.__dict__)
+    async def post(self):
+        await self.get()

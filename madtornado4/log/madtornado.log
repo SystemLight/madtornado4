@@ -1,0 +1,8 @@
+[I 200904 12:15:21 startup:179] Remote access address: http://192.168.52.171:8095
+[I 200904 12:15:21 startup:180] Allow access address: http://0.0.0.0:8095
+[I 200904 12:15:24 web:2250] 200 GET / (192.168.52.171) 311.02ms
+[I 200904 12:15:24 web:2250] 200 GET /images/logo.png (192.168.52.171) 3.00ms
+[I 200904 12:15:24 web:2250] 200 GET /css/bootstrap.min.css (192.168.52.171) 9.00ms
+[I 200904 12:15:25 web:2250] 200 GET /js/jquery.min.js (192.168.52.171) 5.00ms
+[I 200904 12:15:25 web:2250] 200 GET /js/bootstrap.bundle.min.js (192.168.52.171) 6.00ms
+[I 200904 12:15:25 web:2250] 200 GET /favicon.ico (192.168.52.171) 5.00ms

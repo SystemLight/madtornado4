@@ -18,7 +18,10 @@ import os
 from typing import List, Dict, Tuple, Type, Awaitable, Union, Any
 
 """
-madtornado启动器，一般来说你不应该修改这里的内容
+
+    madtornado启动器，一般来说你不应该修改这里的内容，
+    由主程序调用并使用
+
 """
 
 # 尝试加载launch配置参数
