@@ -16,7 +16,8 @@ pip install madtornado4
 madtornado4通过`mad`命令提供构建操作，在控制台中键入mad即可获得帮助
 
 - mad install [version]: 指定madtornado的版本号在当前目录下初始化项目。
-- mad list: 查看所有可用的版本号。
+- mad list: 查看所有可用的madtornado版本。
+- mad new [Template]: 在madtornado4项目下新建制定模板文件，如果不输入模板名称列出所有模板。
 
 ## 文档
 

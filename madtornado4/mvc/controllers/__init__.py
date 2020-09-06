@@ -132,6 +132,16 @@ class StaticController(StaticFileHandler):
         super(StaticController, self).initialize(path, default_filename)
         self.use_spa = use_spa
 
+    def write_error(self, status_code: int, **kwargs: Any) -> None:
+        exc_info = kwargs.get("exc_info", None)
+        if exc_info and exc_info[0] == HTTPError:
+            self.write({
+                "status_code": status_code,
+                "message": exc_info[1].log_message
+            })
+        else:
+            super().write_error(status_code, **kwargs)
+
     def data_received(self, chunk: bytes) -> Optional[Awaitable[None]]:
         raise NotImplementedError()
 

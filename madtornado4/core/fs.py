@@ -69,3 +69,38 @@ def kill_form_port(port: Union[int, str]) -> NoReturn:
     else:
         command = """kill -9 $(netstat -nlp | grep :""" + port + """ | awk '{print $7}' | awk -F "/" '{print $1}')"""
     os.system(command)
+
+
+class InvalidPath(Exception):
+    pass
+
+
+def check_join(root_path: str, *args) -> str:
+    """
+
+    检查合并后的路径是否在根路径当中，如果超出抛出异常
+
+    :param root_path: 根路径
+    :param args: 路径块集合
+    :return: 合并后的绝对路径
+
+    """
+    result_path = os.path.abspath(os.path.join(root_path, *args))
+    if root_path not in result_path:
+        raise InvalidPath()
+    return result_path
+
+
+def safe_join(*args) -> str:
+    """
+
+    合并给定路径成为一个绝对路径，如果某个子路径块超出父路径会抛出异常
+
+    :param args: 路径块集合
+    :return: 合并后的绝对路径
+
+    """
+    safe_path = args[0]
+    for i in range(1, len(args)):
+        safe_path = check_join(safe_path, args[i])
+    return safe_path

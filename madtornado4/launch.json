@@ -37,6 +37,9 @@
       "db": "",
       "host": "",
       "port": 3306
+    },
+    "resource": {
+      "root_path": "wwwroot/storage/"
     }
   }
 }
