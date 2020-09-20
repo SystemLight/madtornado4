@@ -1,4 +1,5 @@
 from collections import defaultdict
+from typing import List, Union
 
 
 def api_method(method):
@@ -101,6 +102,37 @@ def uri(path: str, *args) -> str:
     return path.format(**ArgType.__dict__)
 
 
+def create_router(prefix: str):
+    """
+
+    创键router函数，该函数用于包裹__urls，
+    添加公用前缀
+
+    举例::
+
+        router = create_router("/api")
+
+        __urls = router(["/test"])
+        或者
+        __urls = [router("/test")]
+
+    :param prefix: 公用url前缀
+    :return: router函数
+
+    """
+
+    def __router(urls: Union[List[str], str]):
+        if isinstance(urls, str):
+            return "/" + prefix.strip("/") + "/" + urls.lstrip("/")
+
+        new_urls = []
+        for url in urls:
+            new_urls.append("/" + prefix.strip("/") + "/" + url.lstrip("/"))
+        return new_urls
+
+    return __router
+
+
 class RegisterMeta(type):
     """
 
@@ -114,7 +146,7 @@ class RegisterMeta(type):
         super(RegisterMeta, cls).__init__(what, bases, _dict)
 
         # 获取handler的注册路径地址
-        __urls = _dict.get("_{}__urls".format(what), ["/" + what])
+        __urls = _dict.get("_{}__urls".format(what), ["/" + what.lower()])
 
         # 注册到路由池当中
         __virtual_host = _dict.get("_{}__virtual_host".format(what), ".*")
