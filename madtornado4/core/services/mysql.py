@@ -90,8 +90,8 @@ class MysqlService(MysqlConnService):
 
     控制器中获取服务::
 
-        service = await self.catapult("MysqlService")(self.catapult("MysqlPoolService"))
-        当服务被获取以后，之后再次调用catapult将返回相同对象，该对象被挂载到self当中
+        service = await self.obtain("MysqlService")(self.obtain("MysqlPoolService"))
+        当服务被获取以后，之后再次调用obtain将返回相同对象，该对象被挂载到self当中
 
         如：self.MysqlService   self.MysqlPoolService 这些实例是非重复的
         通过catapult获取的服务会自动销毁和创建，如果服务未注册会返回空对象

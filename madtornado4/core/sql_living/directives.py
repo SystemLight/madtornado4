@@ -53,7 +53,7 @@ class DirectivesBasic(ABC):
         return result
 
 
-def build_sql(sql: str) -> "SQL":
+def build_sql(model: object, sql: str) -> "SQL":
     return SQL()
 
 

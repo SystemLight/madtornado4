@@ -1,8 +1,12 @@
 from abc import ABC, abstractmethod
+from typing import Optional, Any
 
 
-def sql_filter(sql) -> str:
-    dirty_stuff = ["\"", "\\", "*", "'", "=", "-", "#", ";", "<", ">", "+", "%", "$", "(", ")", "%", "@", "!"]
+def sql_filter(sql: Any) -> Optional[str]:
+    if sql is None or sql is "":
+        return None
+
+    dirty_stuff = ["\"", "\\", "*", "'", "=", "-", "#", ";", "<", ">", "+", "$", "(", ")", "%", "@", "!"]
     sql = str(sql)
     for stuff in dirty_stuff:
         sql = sql.replace(stuff, "\\{}".format(stuff))
@@ -50,6 +54,7 @@ def render_condition_field(field: "Field", set_mode: bool = False) -> str:
     """
     if field.value is None:
         return ""
+
     field_template = render_pure_field(field)
     field_template += "{operator}'{value}'"
     operator = "=" if set_mode else field.operator
@@ -155,8 +160,56 @@ class Field:
 
     def like(self, v):
         # field like value
-        self.__operator = "like"
-        self.__value = sql_filter(v)
+        self.__operator = " like "
+        val = sql_filter(v)
+        if val is None:
+            return self
+        self.__value = "%" + val + "%"
+        return self
+
+    def llike(self, v):
+        # field like value
+        self.__operator = " like "
+        val = sql_filter(v)
+        if val is None:
+            return self
+        self.__value = "%" + val
+        return self
+
+    def rlike(self, v):
+        # field like value
+        self.__operator = " like "
+        val = sql_filter(v)
+        if val is None:
+            return self
+        self.__value = val + "%"
+        return self
+
+    def nolike(self, v):
+        # field like value
+        self.__operator = " not like "
+        val = sql_filter(v)
+        if val is None:
+            return self
+        self.__value = "%" + val + "%"
+        return self
+
+    def nollike(self, v):
+        # field like value
+        self.__operator = " not like "
+        val = sql_filter(v)
+        if val is None:
+            return self
+        self.__value = "%" + val
+        return self
+
+    def norlike(self, v):
+        # field like value
+        self.__operator = " not like "
+        val = sql_filter(v)
+        if val is None:
+            return self
+        self.__value = val + "%"
         return self
 
 

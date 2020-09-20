@@ -18,6 +18,5 @@ class Example(ApiController):
     async def get(self):
         return {"hello": "example"}
 
-    @api_method
     async def post(self):
-        pass
+        self.write({"msg": "Example"})

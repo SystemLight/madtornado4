@@ -41,6 +41,12 @@ def cross_domain(origin: str = "*", headers: str = "*", methods: str = "GET,POST
 
     access为当前请求方法添加跨域属性
 
+    举例说明::
+
+        @cross_domain()
+        async def get(self):
+            return {}
+
     :param origin: 允许的作用域
     :param headers: 允许的请求头
     :param methods: 允许的请求方法

@@ -29,6 +29,7 @@ class InitUpload(ApiController):
 
     __urls = ["/file/initupload"]
 
+    @cross_domain()
     @api_method
     async def get(self):
         # 1. 校验路径是否为合法路径
@@ -101,6 +102,7 @@ class MergeFile(ApiController):
 
     __urls = ["/file/mergefile"]
 
+    @cross_domain()
     @api_method
     async def post(self):
         # 1. 合并数据到临时文件当中，校验MD5是否一致
