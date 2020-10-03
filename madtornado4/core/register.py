@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import List, Union
+from typing import List, Union, Callable
 
 
 def api_method(method):
@@ -30,6 +30,8 @@ def api_method(method):
                 new_args.append(args[i])
         result = await method(self, *new_args)
         result = {} if result is None else result
+        if "mvc.models" in str(result):
+            result = result.__dict__
         self.write(result)
         return result
 
@@ -108,11 +110,10 @@ def uri(path: str, *args) -> str:
     return path.format(**ArgType.__dict__)
 
 
-def create_router(prefix: str):
+def create_router(prefix: str, use_uri: bool = False) -> Callable[[Union[List[str], str]], List]:
     """
 
-    创键router函数，该函数用于包裹__urls，
-    添加公用前缀
+    创键router函数，该函数用于包裹__urls，添加公用前缀
 
     举例::
 
@@ -123,6 +124,7 @@ def create_router(prefix: str):
         __urls = [router("/test")]
 
     :param prefix: 公用url前缀
+    :param use_uri: 是否使用URI函数解析路径
     :return: router函数
 
     """
@@ -134,7 +136,7 @@ def create_router(prefix: str):
         new_urls = []
         for url in urls:
             new_urls.append("/" + prefix.strip("/") + "/" + url.lstrip("/"))
-        return new_urls
+        return map(uri, new_urls) if use_uri else new_urls
 
     return __router
 

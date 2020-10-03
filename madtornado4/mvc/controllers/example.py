@@ -1,7 +1,8 @@
 from core.register import api_method, create_router
 from mvc.controllers import ApiController
+from mvc.models import example
 
-api_router = create_router("/api")
+api_router = create_router("/api", use_uri=True)
 
 
 class Example(ApiController):
@@ -12,11 +13,14 @@ class Example(ApiController):
 
     """
 
-    __urls = api_router(["/example"])
+    __urls = api_router(["/example/{Word}"])
 
     @api_method
-    async def get(self):
-        return {"hello": "example"}
+    async def get(self, word):
+        if word == "model":
+            return example.Elves()
+        else:
+            return {"hello": "get"}
 
     async def post(self):
         self.write({"msg": "Example"})
