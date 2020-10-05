@@ -14,6 +14,13 @@ except ImportError:
     def injection(stp: IStartup) -> IStartup:
         return stp
 
+import asyncio
+import sys
+
+if sys.version_info[0] == 3 and sys.version_info[1] >= 8 and sys.platform.startswith('win'):
+    # Fix python3.8: https://github.com/tornadoweb/tornado/issues/2608
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
 if __name__ == "__main__":
     """
 

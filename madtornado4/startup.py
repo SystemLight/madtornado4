@@ -14,7 +14,6 @@ from core.interface import IStartup, IDispose
 from mvc.controllers import StaticController
 
 import os
-
 from typing import List, Dict, Tuple, Type, Awaitable, Union, Any
 
 """
