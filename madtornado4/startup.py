@@ -11,7 +11,7 @@ from core.fs import require
 from core.register import RegisterMeta
 from core.ui import method, module
 from core.interface import IStartup, IDispose
-from mvc.controllers import StaticController
+from mvc.controllers import StaticGhost
 
 import os
 from typing import List, Dict, Tuple, Type, Awaitable, Union, Any
@@ -84,7 +84,7 @@ class Startup(IStartup):
         for s in setting:
             static_url_prefix = s["url_prefix"].rstrip("/")
             routes.append((
-                r"{}/(.*)$".format(static_url_prefix), StaticController,
+                r"{}/(.*)$".format(static_url_prefix), StaticGhost,
                 {
                     "path": s["map_path"], "default_filename": s["default_filename"],
                     "use_spa": s["use_spa"]

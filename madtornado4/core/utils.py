@@ -1,7 +1,33 @@
-import os
 import json
-import platform
-from typing import List, Optional, Callable, TypeVar, Iterable, Tuple
+from typing import List, Dict, Union, Optional, Callable, TypeVar, Iterable, Tuple
+
+
+def find_key(obj: Union[Dict, List], key: str):
+    """
+
+    根据字符串查找对象值，字符串形式如a.b.0，
+    查找对象，如::
+
+        {"a":{"b":["val"]}}
+
+    val值将被查出
+
+    :param obj: 查找key值的对象
+    :param key: 查找key
+    :return: 查找到的值
+
+    """
+    key_list = key.split(".")
+    for k in key_list:
+        if isinstance(obj, list):
+            val = obj[int(k)]
+        else:
+            val = obj.get(k)
+        if val is None:
+            return None
+        else:
+            obj = val
+    return obj
 
 
 def inin(content: str, pool: List[str]) -> Optional[str]:
@@ -211,20 +237,3 @@ class UpdateList(list):
         for index, item in enumerate(self):
             if callback(item):
                 return index, item
-
-
-def kill_form_port(port):
-    """
-
-    根据传入端口号，尝试杀死进程，支持windows和linux平台
-
-    :param port: 端口号，int类型
-    :return: None
-
-    """
-    port = str(port)
-    if platform.system() == 'Windows':
-        command = """for /f "tokens=5" %i in ('netstat -ano ^| find \"""" + port + """\" ') do (taskkill /f /pid %i)"""
-    else:
-        command = """kill -9 $(netstat -nlp | grep :""" + port + """ | awk '{print $7}' | awk -F "/" '{print $1}')"""
-    os.system(command)

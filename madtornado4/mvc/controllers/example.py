@@ -1,11 +1,11 @@
 from core.register import api_method, create_router
-from mvc.controllers import ApiController
+from mvc.controllers import ApiGhost
 from mvc.models import example
 
 api_router = create_router("/api", use_uri=True)
 
 
-class Example(ApiController):
+class Example(ApiGhost):
     """
 
     示例控制器，注意tornado路由是严格区分大小写的，

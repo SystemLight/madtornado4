@@ -150,17 +150,19 @@ class RegisterMeta(type):
 
     route_pool = defaultdict(list)
 
-    def __init__(cls, what, bases=None, _dict=None):
+    def __init__(cls, what: str, bases=None, _dict=None):
         super(RegisterMeta, cls).__init__(what, bases, _dict)
 
-        # 获取handler的注册路径地址
-        __urls = _dict.get("_{}__urls".format(what), ["/" + what.lower()])
+        if not what.endswith("Ghost"):
 
-        # 注册到路由池当中
-        __virtual_host = _dict.get("_{}__virtual_host".format(what), ".*")
+            # 获取handler的注册路径地址
+            __urls = _dict.get("_{}__urls".format(what), ["/" + what.lower()])
 
-        for url in __urls:
-            RegisterMeta.route_pool[__virtual_host].append((url, cls))
+            # 注册到路由池当中
+            __virtual_host = _dict.get("_{}__virtual_host".format(what), ".*")
+
+            for url in __urls:
+                RegisterMeta.route_pool[__virtual_host].append((url, cls))
 
     def __call__(cls, *args, **kwargs):
         return super(RegisterMeta, cls).__call__(*args, **kwargs)

@@ -10,15 +10,21 @@ from core import VERSION
 from typing import Optional, Awaitable, Any, NoReturn, Union, Type
 
 
-class ApiController(RequestHandler, metaclass=RegisterMeta):
+class ApiGhost(RequestHandler, metaclass=RegisterMeta):
     """
 
-    基础API控制器，请求控制器的基类
+    基础API控制器，请求控制器的基类，madtornado规定，设置metaclass为RegisterMeta，
+    或者继承ApiGhost的类将会注册路由到Application中，但是类名称以Ghost结尾时，该类
+    不会注册路由当中，一般用于其它类基类时使用此效果
+
+    .. attribute:: __urls
+        路由配置参数，如果不填写默认为控制器名称，接收List[str]类型，
+        可以为同一个控制器指定多个url访问路径
+
+    .. attribute:: __virtual_host
+        指定当前控制器所属的虚拟主机，如果不提供默认为.*，即任何域名访问都可以访问成功
 
     """
-
-    __urls = []
-    __virtual_host = None
 
     def data_received(self, chunk: bytes) -> Optional[Awaitable[None]]:
         pass
@@ -31,17 +37,17 @@ class ApiController(RequestHandler, metaclass=RegisterMeta):
         if isinstance(chunk, dict) or isinstance(chunk, list):
             self.set_header("Content-Type", "application/json; charset=UTF-8")
             chunk = json.dumps(chunk, cls=encoder, ensure_ascii=False)
-        super(ApiController, self).write(chunk)
+        super(ApiGhost, self).write(chunk)
 
     def write_error(self, status_code: int, **kwargs: Any) -> None:
         exc_info = kwargs.get("exc_info", None)
-        if exc_info and exc_info[0] == HTTPError:
+        if exc_info and issubclass(exc_info[0], HTTPError):
             self.write({
                 "status_code": status_code,
-                "message": exc_info[1].log_message
+                "log_message": exc_info[1].log_message
             })
         else:
-            super(ApiController, self).write_error(status_code, **kwargs)
+            super(ApiGhost, self).write_error(status_code, **kwargs)
 
     def static_url(self, path: str, name: Optional[str] = None, **kwargs) -> str:
         """
@@ -109,6 +115,35 @@ class ApiController(RequestHandler, metaclass=RegisterMeta):
 
         return None
 
+    def give(self, key: str):
+        """
+
+        输入链式key字符，如 galaxy.resource.root_path ，
+        查找launch下的galaxy下的resource下的root_path的值
+
+        :param key: 链式字符串
+        :return: 查找的值
+
+        """
+        key_list = key.split(".")
+        now_launch = self.settings["launch"]
+        for key in key_list:
+            now_launch = now_launch.get(key)
+            if now_launch is None:
+                return None
+        return now_launch
+
+    def galaxy(self, key: str):
+        """
+
+        等效于self.give("galaxy." + key)，galaxy下存储用户的配置内容，该内容也可以被service使用
+
+        :param key: 链式字符串
+        :return: 查找的值
+
+        """
+        return self.give("galaxy." + key)
+
     async def close_web(self) -> NoReturn:
         """
 
@@ -121,7 +156,7 @@ class ApiController(RequestHandler, metaclass=RegisterMeta):
         IOLoop.instance().stop()
 
 
-class StaticController(StaticFileHandler):
+class StaticGhost(StaticFileHandler):
     """
 
     静态文件处理控制器
@@ -129,7 +164,7 @@ class StaticController(StaticFileHandler):
     """
 
     def initialize(self, use_spa: str, path: str, default_filename: str = None) -> None:
-        super(StaticController, self).initialize(path, default_filename)
+        super(StaticGhost, self).initialize(path, default_filename)
         self.use_spa = use_spa
 
     def write_error(self, status_code: int, **kwargs: Any) -> None:
@@ -151,8 +186,8 @@ class StaticController(StaticFileHandler):
     async def get(self, path: str, include_body: bool = True) -> None:
         if self.use_spa:
             try:
-                await super(StaticController, self).get(path, include_body)
+                await super(StaticGhost, self).get(path, include_body)
             except HTTPError:
-                await super(StaticController, self).get(self.default_filename, include_body)
+                await super(StaticGhost, self).get(self.default_filename, include_body)
         else:
-            await super(StaticController, self).get(path, include_body)
+            await super(StaticGhost, self).get(path, include_body)

@@ -1,22 +1,37 @@
 from tornado.web import HTTPError
 
-from typing import TypeVar, Type, Callable, Any
+from typing import TypeVar, Type, Callable, Any, Dict, List
 
 Model = TypeVar("Model", Any, Any)
 F = TypeVar("F")
 
 
-def verify(modal_type: Type[Model], catch_method: Callable) -> Model:
+def weak_verify(pool: List[str], catch_method: Callable[[str], Any]) -> Dict:
+    """
+
+    对类型验证更随意，主要用来收集数据，无须建立model实例对象
+
+    :return: 数据对象Dict
+
+    """
+    obj = {}
+    for i in pool:
+        obj[i] = catch_method(i)
+
+    return obj
+
+
+def verify(model_type: Type[Model], catch_method: Callable[[str], Any]) -> Model:
     """
 
     验证参数是否符合模型需求
 
-    :param modal_type: 继承IModal的模型对象
+    :param model_type: 继承IModal的模型对象
     :param catch_method: 捕获参数的方法，例如self.get_argument，dict().get等等，你甚至可以自定义，始终会传递一个value参数
     :return: 验证后的模型实例对象
 
     """
-    obj = modal_type()
+    obj = model_type()
     for key in obj.__dict__:
         setattr(obj, key, catch_method(key))
     return obj

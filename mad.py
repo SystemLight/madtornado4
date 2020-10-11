@@ -32,10 +32,10 @@ class NewModel(IModel):
 
 """
 controller_template = """from core.register import api_method
-from mvc.controllers import ApiController
+from mvc.controllers import ApiGhost
 
 
-class New(ApiController):
+class NewController(ApiGhost):
 
     @api_method
     async def get(self):
@@ -117,21 +117,25 @@ def new_file(path, template):
 
 
 def new_file_wrap(path, template):
+    if os.path.exists(path):
+        return lambda: print(path + "\n文件已经存在...")
     return lambda: new_file(path, template)
 
 
 def new_callback(**kwargs):
-    name = kwargs.get("name")
+    template = kwargs.get("template")
+    filename = kwargs.get("filename")[0]
+
     templates = {
         "controller": new_file_wrap(
-            os.path.join("./mvc/controllers", "controller" + str(int(time.time())) + ".py"), controller_template
+            os.path.join("./mvc/controllers", filename + ".py"), controller_template
         ),
         "model": new_file_wrap(
-            os.path.join("./mvc/models", "model" + str(int(time.time())) + ".py"), model_template
+            os.path.join("./mvc/models", filename + ".py"), model_template
         )
     }
 
-    if name is None:
+    if template is None:
         print("""
 Templates                                  Short Name                           Description
 
@@ -140,8 +144,8 @@ Templates                                  Short Name                           
 模型模板文件                               model                                新建一个模型模板文件
 """)
     else:
-        if name in templates.keys():
-            templates[name]()
+        if template in templates.keys():
+            templates[template]()
         else:
             return print("指定的模板不存在")
 
@@ -166,7 +170,8 @@ def build_argparse() -> ArgumentParser:
 
     new = subparsers.add_parser("new", help="创建指定名称的模板代码")
     new.set_defaults(callback=new_callback)
-    new.add_argument("name", nargs="?", default=None)
+    new.add_argument("template", nargs="?", default=None)
+    new.add_argument("-fn, --filename", nargs=1, default=[str(int(time.time()))], dest="filename")
 
     return arg_parse
 
