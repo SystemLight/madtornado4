@@ -1,2 +1,2 @@
-tornado==6.0.4
+tornado==6.1.0
 aiomysql==0.0.20
