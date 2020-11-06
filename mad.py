@@ -90,7 +90,7 @@ def install_callback(**kwargs):
     zipfile.ZipFile("madtornado.zip").extractall("./")
     copy_zip(force)
     shutil.rmtree("madtornado4")
-    os.remove("madtornado4.zip")
+    os.remove("madtornado.zip")
 
 
 def list_callback(**kwargs):
