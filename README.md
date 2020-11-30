@@ -11,6 +11,17 @@ Madtornado4是一个构建MVC Tornado项目的工具。
 pip install madtornado4
 ```
 
+## 异步解决方案
+
+| 领域 | 模块 |
+| --- | --- |
+| web | tornado |
+| mysql | aiomysql |
+| sqlite3 | aiosqlite |
+| ORM | peewee-async |
+| file | aiofiles |
+| cpu | celery |
+
 ## 用法
 
 madtornado4通过`mad`命令提供构建操作，在控制台中键入mad即可获得帮助
