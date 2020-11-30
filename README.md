@@ -19,8 +19,10 @@ pip install madtornado4
 | mysql | aiomysql |
 | sqlite3 | aiosqlite |
 | ORM | peewee-async |
+| GraphQL | graphene-tornado |
 | file | aiofiles |
 | cpu | celery |
+
 
 ## 用法
 
