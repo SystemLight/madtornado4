@@ -11,7 +11,7 @@ import shutil
 
 """
 
-该模块提供了后端文件分块上传API
+该模块提供了后端文件分块上传API，文件读取采用同步方式，如需异步请自行使用aiofiles编写
 
 """
 MD5_CHUNK_ROOT_PATH = "wwwroot/chunks"
