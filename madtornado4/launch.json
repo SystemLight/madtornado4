@@ -39,8 +39,8 @@
       "port": 3306
     },
     "resource": {
-      "root_path": "wwwroot/storage/"
+      "root_path": "storage/"
     },
-    "mock_path": "wwwroot/mocks"
+    "mock_path": "mocks/"
   }
 }

@@ -139,12 +139,13 @@ class Startup(IStartup):
 
     def build(self) -> Application:
         settings = {
+            "launch": launch,
+
+            # "template_loader": "配置模板加载引擎",
             "template_path": "mvc/views",
 
             "ui_methods": method,
             "ui_modules": module.export,
-
-            "launch": launch,
 
             **self.debug_setting
         }
