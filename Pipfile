@@ -1,0 +1,13 @@
+[[source]]
+url = "https://mirrors.aliyun.com/pypi/simple/"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+tornado = "==6.1"
+aiomysql = "==0.0.21"
+
+[dev-packages]
+
+[requires]
+python_version = "3.7"

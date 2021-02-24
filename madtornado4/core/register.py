@@ -31,7 +31,7 @@ def api_method(method):
         result = await method(self, *new_args)
         result = {} if result is None else result
         if "mvc.models" in str(result):
-            result = result.__dict__
+            result = result.data
         self.write(result)
         return result
 

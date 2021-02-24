@@ -5,9 +5,9 @@ from typing import Dict
 class IModel(ABC):
 
     @property
-    def __dict__(self) -> Dict:
+    def data(self) -> Dict:
         obj = dict()
-        for key in super(IModel, self).__dict__.keys():
+        for key in self.__dict__.keys():
             k = key.split("__")[1]
             v = getattr(self, k)
             if isinstance(v, IModel):
