@@ -20,6 +20,46 @@ madtornado4通过`mad`命令提供构建操作，在控制台中键入mad即可�
 - mad list: 查看所有可用的madtornado版本。
 - mad new [Template]: 在madtornado4项目下新建制定模板文件，如果不输入模板名称列出所有模板。
 
+## 数据库连接
+
+1. 环境中需要安装aiomysql
+2. 配置launch.json
+3. 打开galaxy中的__init__.py，注册mysql服务`stp.add_scoped(mysql.MysqlService).add_singleton(mysql.MysqlPoolService)`
+4. 基本使用举例
+
+```python
+class DatabaseInsertDemo(ApiGhost):
+    __urls = api_router(["/database/insert"])
+
+    @api_method
+    async def get(self):
+        """
+
+        插入一条数据到表格
+        访问地址：/api/database/insert
+
+        """
+        service: mysql.MysqlService = await self.obtain("MysqlService")(self.obtain("MysqlPoolService"))
+        await service.execute("insert into user (name, age) values ('Lisys',20)")
+        return "插入一条数据"
+
+
+class DatabaseSelectDemo(ApiGhost):
+    __urls = api_router(["/database/select"])
+
+    @api_method
+    async def get(self):
+        """
+
+        插入一条数据到表格
+        访问地址：/api/database/select
+
+        """
+        service: mysql.MysqlService = await self.obtain("MysqlService")(self.obtain("MysqlPoolService"))
+        data = await service.queryall("select * from user")
+        return data
+```
+
 ## 异步解决方案
 
 | 领域 | 模块 |

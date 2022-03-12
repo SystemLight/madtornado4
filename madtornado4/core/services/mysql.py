@@ -24,6 +24,13 @@ class MysqlPoolService(IDispose):
         return self
 
     async def destroy(self):
+        """
+
+        如果服务被注册成单例服务，那么只有程序退出时才调用
+        如果服务被注册成会话服务，那么每次请求结束时会调用
+
+        :return:
+        """
         if self.pool:
             self.pool.close()
             await self.pool.wait_closed()
@@ -103,6 +110,13 @@ class MysqlService(MysqlConnService):
         self.pool_service = None  # type: Optional[MysqlPoolService]
 
     async def __call__(self, service: MysqlPoolService):
+        """
+
+        依赖服务MysqlPoolService，所以需要调用时传输依赖服务
+
+        :param service:
+        :return:
+        """
         self.pool_service = service
         self.conn = await self.pool_service.pool.acquire()
         self.cur = await self.conn.cursor(aiomysql.cursors.DictCursor)

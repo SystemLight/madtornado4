@@ -22,4 +22,6 @@ def injection(stp: IStartup) -> IStartup:
     :return: 传入的启动器对象实例
 
     """
+    # 注册一个会话服务和一个单例服务，由于MysqlService依赖与MysqlPoolService服务，所以需要把两个服务都注册进来
+    # stp.add_scoped(mysql.MysqlService).add_singleton(mysql.MysqlPoolService)
     return stp
